@@ -46,6 +46,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - run: npm run lint
+      - run: npm ci
+      - name: Run ESLint
+        run: npm run lint
+
 
 
