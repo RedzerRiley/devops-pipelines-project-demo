@@ -94,22 +94,3 @@ This project is a work in progress. Here is the current status of the pipeline c
 | **Monitoring (Planned)** | Prometheus & Grafana | Collecting metrics and visualizing dashboards. |
 
 ---
-
-## How to Run This Demo
-
-This project requires **Docker Desktop** (running), **`k3d`**, and **`kubectl`** to be installed.
-
-1.  **Start Docker Desktop.**
-
-2.  **Create the K3d Cluster:** This command forwards your local port `8080` to the cluster's load balancer.
-    ```bash
-    k3d cluster create dev-cluster --port 8080:80@loadbalancer
-    ```
-
-3.  **Bootstrap Flux:**
-    * Set your `GITHUB_TOKEN` as an environment variable.
-    * Run the `flux bootstrap github ...` command to connect your K3d cluster to your GitOps repository (`my-k8s-flux`).
-
-4.  **View the App:**
-    * Flux will automatically deploy the manifests from the GitOps repo.
-    * You can access the deployed application at: [**http://localhost:8080**](http://localhost:8080)
