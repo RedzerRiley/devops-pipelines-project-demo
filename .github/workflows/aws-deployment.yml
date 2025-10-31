@@ -1,0 +1,51 @@
+# This is the GitHub Action workflow from Section 2
+# It builds and "deploys" (in this case, pushes to ECR)
+name: AWS Deployment
+
+on:
+  push:
+    branches:
+      - main  # Deploy on push to main branch
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: myapp
+  IMAGE_TAG: latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3  # Check out code
+
+      # Set up AWS credentials from GitHub secrets
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Build the Docker image
+      - name: Build Docker Image
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          echo "image_name=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      # Push the image to AWS ECR
+      - name: Push Docker Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          # Create repository if it doesn't exist (ignoring errors if it does)
+          aws ecr create-repository --repository-name $ECR_REPOSITORY || true
+          
+          # Push the image
+          docker push ${{ steps.build-image.outputs.image_name }}

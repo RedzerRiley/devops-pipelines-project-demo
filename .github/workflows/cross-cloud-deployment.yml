@@ -1,0 +1,43 @@
+# This is the GitHub Action workflow from Section 4
+# It shows how to deploy to two clouds in parallel
+name: Cross-Cloud Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # Deploy to AWS
+  aws-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: AWS Setup & Deploy
+        run: |
+          # Configure AWS CLI with credentials
+          echo "Setting up AWS credentials..."
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
+          
+          echo "Running AWS deployment commands..."
+          # This is where you would add your `aws ecs update-service` 
+          # or `aws eks update-kubeconfig` and `kubectl apply` commands.
+          echo "AWS Deployment Complete."
+
+  # Deploy to Oracle Cloud in parallel
+  oracle-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Oracle Setup & Deploy
+        run: |
+          echo "Setting up Oracle Cloud CLI..."
+          # You would need to set up OCI secrets (e.g., private key, config file)
+          # and then run the OCI CLI commands.
+          # oci setup config --...
+          echo "Running Oracle Cloud deployment commands..."
+          # This is where you would add your `oci ce cluster update`
+          # or `oci oke update-kubeconfig` and `kubectl apply` commands.
+          echo "Oracle Deployment Complete."
