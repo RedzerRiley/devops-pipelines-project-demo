@@ -1,0 +1,33 @@
+# This workflow (from Section 1) scans your code for vulnerabilities
+name: CodeQL
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  analyze:
+    name: Analyze code with CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # Required to display findings in GitHub's Security tab
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Initialize the CodeQL scanning tools
+      - name: Set up CodeQL
+        uses: github/codeql-action/init@v2
+        # Specify the languages to analyze.
+        # Add 'javascript' if your crud-app is Node.js, or 'python', 'go', 'java', etc.
+        with:
+          languages: javascript 
+
+      # Run the analysis and generate results
+      - name: Analyze code
+        uses: github/codeql-action/analyze@v2

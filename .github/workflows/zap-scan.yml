@@ -1,0 +1,21 @@
+# This workflow (from Section 2) scans your LIVE, deployed application
+name: ZAP Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  zap-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Run the ZAP security scan against your deployed application
+      - name: Run ZAP security scan
+        uses: zaproxy/action-full-scan@v0.10.0 # Using a newer version
+        with:
+          # IMPORTANT: You MUST change this to your live application's URL
+          target: 'https://your-app-url.onrender.com'
